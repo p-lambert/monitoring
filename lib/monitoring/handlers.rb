@@ -7,7 +7,6 @@ module Monitoring
     Monitoring.configure do |config|
       config.add_handler(:logger, Handlers::Logger.new)
       config.add_handler(:report, Handlers::FileReporter.new)
-      config.add_handler(:sentry, Handlers::SentryReporter.new) if defined?(Raven)
     end
   end
 end
