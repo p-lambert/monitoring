@@ -19,9 +19,9 @@ module Monitoring
     attr_reader :name, :task, :handlers
 
     def run_task
-      status, message = with_timeout { task.call }
+      data = with_timeout { task.call }
 
-      Result.new(name, status, message)
+      Result.generate(name, data)
     rescue => e
       Result.new(name, FAILURE, e.message)
     end

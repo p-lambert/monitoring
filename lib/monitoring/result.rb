@@ -22,5 +22,20 @@ module Monitoring
     def to_json(*args)
       to_h.to_json(*args)
     end
+
+    def self.generate(name, data)
+      case data
+      when Result then data
+      when RESULT_PAIR then new(name, !!data[0], data[1])
+      when nil, false, '' then new(name, FAILURE, 'FAILED')
+      when String then new(name, SUCCESS, data)
+      else new(name, SUCCESS, 'OK')
+      end
+    end
+
+    RESULT_PAIR = lambda do |data|
+      data.is_a?(Array) && data.size == 2 && data.last.is_a?(String)
+    end
+    private_constant :RESULT_PAIR
   end
 end
