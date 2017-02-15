@@ -8,6 +8,7 @@ module Monitoring
   require_relative 'monitoring/repositories'
   require_relative 'monitoring/runner'
   require_relative 'monitoring/route'
+  require_relative 'monitoring/railtie' if defined?(Rails)
 
   SUCCESS = true
   FAILURE = false
