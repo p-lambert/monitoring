@@ -35,8 +35,10 @@ module Monitoring
     yield(configuration)
   end
 
-  def add(name, callable = nil, handle_with: nil, &block)
-    probes.add(name, callable, handle_with, &block)
+  def add(name, callable = nil, handle_with: [], &block)
+    probe = callable || block
+
+    probes.add(name, probe, handle_with)
   end
 
   def run
