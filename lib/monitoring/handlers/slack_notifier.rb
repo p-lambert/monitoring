@@ -3,22 +3,10 @@ require_relative 'poster'
 module Monitoring
   module Handlers
     class SlackNotifier < Poster
-      def initialize(*)
-        super
-        @channel = options.delete(:channel) || '#monitoring'
-      end
-
       private
 
-      attr_reader :channel
-
       def body(result)
-        {
-          username: username,
-          channel: channel,
-          icon: icon(result),
-          text: text(result)
-        }
+        { username: username, icon: icon(result), text: text(result) }
       end
 
       def username
