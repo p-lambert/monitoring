@@ -1,10 +1,8 @@
 module Monitoring
   module Handlers
     class FileReporter
-      def call(res)
-        return unless res.is_a?(Result)
-
-        Monitoring.report.write(res)
+      def call(result)
+        Monitoring.report.write(result)
       end
     end
   end

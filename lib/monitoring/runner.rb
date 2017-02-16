@@ -1,5 +1,3 @@
-require_relative 'probe'
-
 module Monitoring
   class Runner
     def initialize(probes = Monitoring.probes, handlers = Monitoring.handlers)
@@ -25,7 +23,5 @@ module Monitoring
 
       handler_repository.values_at(*handlers).compact
     end
-
-    attr_reader :probes
   end
 end

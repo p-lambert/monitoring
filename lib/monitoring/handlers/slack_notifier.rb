@@ -5,7 +5,7 @@ module Monitoring
     class SlackNotifier < Poster
       def initialize(*)
         super
-        @channel = options.delete(:channel) || '#deploys'
+        @channel = options.delete(:channel) || '#monitoring'
       end
 
       private
@@ -22,17 +22,19 @@ module Monitoring
       end
 
       def username
-        "vestorly-monitoring (#{Monitoring.configuration.application_name})"
+        "vestorly-monitoring (#{app_name})"
       end
 
       def icon(result)
-        return ':x:' unless result.success?
-
-        ':white_check_mark:'
+        (result.success? && ':white_check_mark:') || ':x:'
       end
 
       def text(result)
         "[#{result.probe}]\n#{result.message}"
+      end
+
+      def app_name
+        Monitoring.configuration.application_name
       end
     end
   end

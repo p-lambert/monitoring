@@ -1,14 +1,17 @@
 module Monitoring
   module Handlers
     class SentryReporter
-      def call(res)
-        return unless res.error?
+      def call(result)
+        return unless result.failure?
 
-        event = "[#{app.name}][monitoring][#{res.name}][#{res.message}]"
-        Raven.send_event(event)
+        Raven.send_event(event(result))
       end
 
       private
+
+      def event(result)
+        "[monitoring][app=#{app_name} #{result}]"
+      end
 
       def app_name
         Monitoring.configuration.application_name
