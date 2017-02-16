@@ -4,14 +4,16 @@ module Monitoring
       def call(result)
         return unless result.failure?
 
-        Raven.send_event(event(result))
+        Raven.capture_message(
+          "[monitoring][#{result.probe}] #{result.message}",
+          level: 'warning',
+          tags: {
+            application: app_name
+          }
+        )
       end
 
       private
-
-      def event(result)
-        "[monitoring][app=#{app_name} #{result}]"
-      end
 
       def app_name
         Monitoring.configuration.application_name
