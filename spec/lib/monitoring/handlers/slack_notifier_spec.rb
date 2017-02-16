@@ -16,9 +16,9 @@ module Monitoring
 
         let(:expected_body) do
           {
-            username: 'redis (application_name)',
-            icon_emoji: ':white_check_mark:',
-            text: "OK"
+            username: 'application_name',
+            text: ':white_check_mark: *[redis]* OK',
+            mrkdwn: true
           }
         end
 

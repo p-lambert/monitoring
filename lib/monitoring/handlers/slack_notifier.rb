@@ -6,15 +6,7 @@ module Monitoring
       private
 
       def body(result)
-        {
-          username: username(result),
-          icon_emoji: emoji(result),
-          text: text(result)
-        }
-      end
-
-      def username(result)
-        "#{result.probe} (#{app_name})"
+        { username: app_name, text: text(result), mrkdwn: true }
       end
 
       def emoji(result)
@@ -22,7 +14,7 @@ module Monitoring
       end
 
       def text(result)
-        "#{result.message}"
+        "#{emoji(result)} *[#{result.probe}]* #{result.message}"
       end
 
       def app_name
