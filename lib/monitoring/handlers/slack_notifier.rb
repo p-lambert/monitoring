@@ -6,19 +6,23 @@ module Monitoring
       private
 
       def body(result)
-        { username: username, icon: icon(result), text: text(result) }
+        {
+          username: username(result),
+          icon_emoji: emoji(result),
+          text: text(result)
+        }
       end
 
-      def username
-        "vestorly-monitoring (#{app_name})"
+      def username(result)
+        "#{result.probe} (#{app_name})"
       end
 
-      def icon(result)
+      def emoji(result)
         (result.success? && ':white_check_mark:') || ':x:'
       end
 
       def text(result)
-        "[#{result.probe}]\n#{result.message}"
+        "#{result.message}"
       end
 
       def app_name

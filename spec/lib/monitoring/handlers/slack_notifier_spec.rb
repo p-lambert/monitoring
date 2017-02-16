@@ -16,9 +16,9 @@ module Monitoring
 
         let(:expected_body) do
           {
-            username: 'vestorly-monitoring (application_name)',
-            icon: ':white_check_mark:',
-            text: "[redis]\nOK"
+            username: 'redis (application_name)',
+            icon_emoji: ':white_check_mark:',
+            text: "OK"
           }
         end
 
