@@ -27,6 +27,10 @@ following sections. A `Probe` can be declared as it follows:
 Monitoring.add(:redis) do
   $redis.connected?
 end
+
+Monitoring.add(:google_dns) do
+  system('nc -z 8.8.8.8 53')
+end
 ```
 
 Every `Probe` execution generates a `Result` object including basic information
