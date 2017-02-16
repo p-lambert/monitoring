@@ -1,7 +1,7 @@
 # Monitoring
 
-Vestorly's `monitoring` gem provides a standard interface for writing, running,
-and reporting application-level monitoring tests. The library has no external
+Vestorly's `monitoring` gem provides standard interfaces for writing,
+performing, and reporting application-level checks. The library has no external
 dependencies and it can be used in any ruby application.
 
 ## Installation
@@ -19,21 +19,18 @@ And then execute:
 ## Basics
 
 There are two central concepts over which the library is built: `probes` and
-`handlers`.  A `Probe` is simply a chunk of monitoring code. It requires a name
-and it has to adhere to a few conventions that will be explained in the
+`handlers`.  A `Probe` is simply a chunk of monitoring code; it requires a name
+and it must adhere to a few conventions that will be explained in the
 following sections. A `Probe` can be declared as it follows:
 
 ```ruby
 Monitoring.add(:redis) do
-  $redis.alive?
+  $redis.connected?
 end
 ```
 
-When a `Probe` runs, it yields a `Result` object including basic information
-about the test: the probe name, the execution result (`SUCCESS` or `FAILURE`)
-and an optional message.
-
-On the other hand, a `Handler` takes a `Result` object and does something
+Every `Probe` execution generates a `Result` object including basic information
+about the test. Conversely, a `Handler` takes a `Result` object and does something
 useful with it. As an example, a `Handler` could log results or report
 it using an error tracking tool such as *Sentry* or *Appsignal*.
 
@@ -43,19 +40,20 @@ The `monitoring` gem comes with a few built-in handlers:
 
 Name | Purpose
 --- | ---
-`Handlers::Logger` | Writes the results to a given sink using either `Rails.logger` or `Logger`. Enabled by default.
-`Handlers::FileReporter` | Writes the aggregate results in `JSON` format to the file specified in `Monitoring.configuration.output_file`. Enabled by default.
+`Handlers::Logger` | Write results to a log sink using either `Rails.logger` or `Logger`. **Enabled by default.**
+`Handlers::FileReporter` | Write aggregate results in `JSON` format to the file specified in `Monitoring.configuration.output_file`. **Enabled by default.**
 `Handlers::SentryReporter` | Report `Sentry` errors using the `raven` gem.
-`Handlers::SlackNotifier` | Sends Slack notifications.
-`Handlers::Poster` | Sends a HTTP POST request with a custom payload.
+`Handlers::SlackNotifier` | Send Slack notifications.
+`Handlers::Poster` | Perform HTTP POST request with a custom payload.
 
 #### Enabling handlers
 
-`Handlers` can be enabled as it follows:
+`handlers` can be enabled as it follows:
 
 ```ruby
 Monitoring.configure do |c|
   c.add_handler :sentry, Monitoring::Handler::SentryReporter.new
+  c.add_handler :slack, Monitoring::Handler::SlackNotifier.new(ENV.fetch(:SLACK_WEBHOOK))
 end
 ```
 
@@ -68,6 +66,27 @@ Monitoring.add(:sendgrid, handle_with: [:logger, :slack]) do
     ...
 end
 ```
+
+## Probing Evaluation
+
+All probes have their return values coerced into `Result` objects:
+
+* `nil`, `false` and `''` are coerced into a `FAILURE` result;
+* exceptions are captured and turned into a `FAILURE` as well;
+* `String` objects are coerced into a `SUCCESS` result and their values are used
+  as the message;
+* pairs like `[true|false, 'custom message']` are also accepted;
+
+These evaluation rules enable `SUCCESS/FAILURE` checks to be performed while
+conveying useful information:
+
+```ruby
+Monitoring.add(:sidekiq_queue) do
+  queue_size = Sidekiq::Queue.new.size
+  [queue_size < 100, "Queue size: #{queue_size}"]
+end
+```
+
 ## Configuration
 
 Here are some useful configuration parameters:
@@ -82,14 +101,14 @@ end
 
 ## Execution
 
-It is the client responsibility to periodically run the tests (using a task
+It is the client responsibility to periodically run the tests (by using a task
 scheduling tool). The entrypoint for running all probes is `Monitoring.run`. For
 your convenience, a `rake monitoring:run` task is provided.
 
 It is worth mentioning that all probes run concurrently in separate threads, so
 keep in mind any thread-safety issues.
 
-## Bonus
+## Monitoring endpoint
 
 You can easily enable a monitoring endpoint in your application by adding the
 following code to your `routes.rb` file:
