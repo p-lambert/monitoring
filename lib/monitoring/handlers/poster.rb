@@ -1,5 +1,6 @@
 require 'uri'
 require 'net/http'
+require 'net/https'
 
 module Monitoring
   module Handlers
@@ -14,9 +15,9 @@ module Monitoring
         request = Net::HTTP::Post.new(uri, options)
         request.body = generate_payload(result)
 
-        result = Net::HTTP.start(uri.hostname, uri.port) do |http|
-          http.request(request)
-        end
+        session = Net::HTTP.new(uri.hostname, uri.port)
+        session.use_ssl = uri.instance_of?(URI::HTTPS)
+        session.request(request)
       end
 
       private
