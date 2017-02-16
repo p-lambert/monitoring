@@ -16,7 +16,7 @@ module Monitoring
     end
 
     def same_probe?(other)
-      other.respond_to?(:[]) && probe == other['probe']
+      other.respond_to?(:[]) && probe.to_s == other['probe'].to_s
     end
 
     def to_s
