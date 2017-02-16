@@ -1,14 +1,14 @@
 module Monitoring
   class Runner
     def initialize(probes = Monitoring.probes, handlers = Monitoring.handlers)
-      @probe_repository = probes.to_enum
-      @handler_repository = handlers
+      @probes = probes.to_enum
+      @handlers = handlers
     end
 
     def call
-      threaded_probes = probe_repository.map do |name, (task, *handlers)|
-        handlers = ensure_handlers(handlers)
-        Thread.new { Probe.new(name, task, *handlers).call }
+      threaded_probes = probes.map do |name, (task, *handler_names)|
+        handler_procs = resolve_handlers(handler_names)
+        Thread.new { Probe.new(name, task, *handler_procs).call }
       end
 
       threaded_probes.each(&:join)
@@ -16,12 +16,12 @@ module Monitoring
 
     private
 
-    attr_reader :probe_repository, :handler_repository
+    attr_reader :probes, :handlers
 
-    def ensure_handlers(handlers)
-      handlers = (handlers.any? && handlers) || handler_repository.keys
+    def resolve_handlers(names)
+      names = handlers.keys unless names.any?
 
-      handler_repository.values_at(*handlers).compact
+      handlers.values_at(*names).compact
     end
   end
 end
