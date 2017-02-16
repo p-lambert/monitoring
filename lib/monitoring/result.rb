@@ -19,6 +19,10 @@ module Monitoring
       other.respond_to?(:[]) && probe == other['probe']
     end
 
+    def to_s
+      "probe=#{probe} status=#{status} message=#{message}"
+    end
+
     def to_json(*args)
       to_h.to_json(*args)
     end

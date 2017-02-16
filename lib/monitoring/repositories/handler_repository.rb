@@ -4,7 +4,7 @@ module Monitoring
   module Repositories
     class HandlerRepository
       extend Forwardable
-      def_delegators :data, :values_at, :delete
+      def_delegators :data, :values_at, :delete, :keys
 
       def initialize
         @data = {}

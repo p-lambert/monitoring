@@ -3,7 +3,7 @@ require_relative 'probe'
 module Monitoring
   class Runner
     def initialize(probes = Monitoring.probes, handlers = Monitoring.handlers)
-      @probe_repository = probes
+      @probe_repository = probes.to_enum
       @handler_repository = handlers
     end
 

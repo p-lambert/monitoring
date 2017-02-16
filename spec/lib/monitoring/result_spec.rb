@@ -92,6 +92,12 @@ module Monitoring
       it { is_expected.to eq(result.to_h.to_json) }
     end
 
+    describe '#to_s' do
+      subject(:to_s) { result.to_s }
+
+      it { is_expected.to eq('probe=database status=true message=OK') }
+    end
+
     describe 'object mutation' do
       it 'cannot be mutated' do
         expect { result.probe = 'NOT' }.to raise_error(/frozen/)
