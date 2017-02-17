@@ -1,5 +1,3 @@
-require 'json'
-
 module Monitoring
   class Result < Struct.new(:probe, :status, :message)
     def initialize(*)
@@ -15,17 +13,14 @@ module Monitoring
       !success?
     end
 
-    def same_probe?(other)
-      other.respond_to?(:[]) && probe.to_s == other['probe'].to_s
-    end
-
     def to_s
       "probe=#{probe} status=#{status} message=#{message}"
     end
 
-    def to_json(*args)
-      to_h.to_json(*args)
+    def to_h(*)
+      { probe.to_s => { 'status' => status, 'message' => message } }
     end
+    alias_method :to_hash, :to_h
 
     def self.generate(name, data)
       case data

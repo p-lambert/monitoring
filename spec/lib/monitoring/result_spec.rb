@@ -50,46 +50,14 @@ module Monitoring
       end
     end
 
-    describe '#same_probe?' do
-      subject(:comparison_result) { result.same_probe?(other) }
+    describe '#to_h' do
+      subject(:to_json) { result.to_h }
 
-      let(:other) { described_class.new(probe, status, message) }
-
-      it { is_expected.to be_truthy }
-
-      context 'when candidate has a different field but same probe name' do
-        let(:other) { described_class.new(probe, status, 'different') }
-
-        it { is_expected.to be_truthy }
+      let(:expected_hash) do
+        { 'database' => { 'status' => true, 'message' => 'OK' } }
       end
 
-      context 'when candidate has a different probe name' do
-        let(:other) { described_class.new('different', status, message) }
-
-        it { is_expected.to be_falsey }
-      end
-
-      context 'when candidate is a hash' do
-        let(:other) do
-          { 'probe' => probe, 'status' => status, 'message' => message }
-        end
-
-        it { is_expected.to be_truthy }
-
-        context 'but with a different probe name' do
-          let(:other) do
-            { 'probe' => :different, 'status' => status, 'message' => message }
-          end
-
-          it { is_expected.to be_falsey }
-        end
-      end
-    end
-
-    describe '#to_json' do
-      subject(:to_json) { result.to_json }
-
-      it { is_expected.to eq(result.to_h.to_json) }
+      it { is_expected.to eq(expected_hash) }
     end
 
     describe '#to_s' do

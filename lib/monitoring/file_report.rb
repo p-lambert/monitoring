@@ -2,16 +2,15 @@ require 'json'
 
 module Monitoring
   class FileReport
+    BLANK_JSON = {}.to_json
+
     def initialize(path = Monitoring.configuration.output_file)
       @mutex = Mutex.new
       @path = path
     end
 
     def write(result)
-      mutex.synchronize do
-        contents = merge_with(result)
-        write_to_file(contents)
-      end
+      mutex.synchronize { update_with(result) }
     end
 
     def read
@@ -23,23 +22,18 @@ module Monitoring
     attr_reader :mutex, :path
 
     def read_from_file
+      return BLANK_JSON unless File.size?(path)
+
       File.read(path)
     end
 
-    def write_to_file(contents)
+    def update_with(result)
+      contents = results_hash.merge(result).to_json
       File.open(path, 'w') { |f| f.write(contents) }
     end
 
-    def merge_with(result)
-      content = parsed_tasks.delete_if { |task| result.same_probe?(task) }
-      content << result
-      content.to_json
-    end
-
-    def parsed_tasks
-      return [] unless File.exists?(path)
-
-      JSON.parse(read_from_file) rescue []
+    def results_hash
+      JSON.parse(read_from_file) rescue {}
     end
   end
 end

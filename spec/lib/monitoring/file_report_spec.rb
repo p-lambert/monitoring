@@ -14,18 +14,18 @@ module Monitoring
 
       let(:file_contents) { File.read(file_path) }
 
-      it 'writes the result as a json-array entry' do
+      it 'writes the result as a json entry' do
         write_report
 
-        expect(file_contents).to eq([result].to_json)
+        expect(file_contents).to eq(result.to_h.to_json)
       end
 
       context 'entry updating' do
         let(:expected_entries) do
-          [
-            { 'probe' => 'bar', 'status' => true, 'message' => 'message2' },
-            { 'probe' => 'foo', 'status' => true, 'message' => 'message3' }
-          ]
+          {
+            'bar' => { 'status' => true, 'message' => 'message2' },
+            'foo' => { 'status' => true, 'message' => 'message3' },
+          }
         end
 
         it 'updates an entry if it exists' do
