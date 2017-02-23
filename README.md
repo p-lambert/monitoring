@@ -86,8 +86,8 @@ conveying useful information:
 
 ```ruby
 Monitoring.add(:sidekiq_queue) do
-  queue_size = Sidekiq::Queue.new.size
-  [queue_size < 100, "Queue size: #{queue_size}"]
+  queue = Sidekiq::Queue.all.first
+  [queue.size < 100, "Queue size: #{queue.size}"]
 end
 ```
 
@@ -106,7 +106,7 @@ end
 ## Execution
 
 It is the client responsibility to periodically run the tests (by using a task
-scheduling tool). The entrypoint for running all probes is `Monitoring.run`. For
+scheduling tool). The entry point for running all probes is `Monitoring.run`. For
 your convenience, a `rake monitoring:run` task is provided.
 
 It is worth mentioning that all probes run concurrently in separate threads, so
@@ -123,7 +123,7 @@ get 'monitoring', to: Monitoring::Route
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/vestorly/monitoring.
+Bug reports and pull requests are welcome on GitHub at https://github.com/Vestorly/monitoring.
 
 
 ## License
