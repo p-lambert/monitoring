@@ -38,7 +38,6 @@ module Monitoring
 
   def add(name, callable = nil, handle_with: [], &block)
     probe = callable || block
-
     probes.add(name, probe, handle_with)
   end
 
