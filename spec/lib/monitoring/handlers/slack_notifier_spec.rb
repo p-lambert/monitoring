@@ -29,6 +29,18 @@ module Monitoring
             .to have_requested(:post, 'hooks.slack.com/services/T00000000')
             .with(body: expected_body)
         end
+
+        context 'result is a failure' do
+          let(:result) { Result.new(:redis, FAILURE, 'FAILURE') }
+
+          it 'notifies everyone in the channel' do
+            call
+
+            expect(WebMock)
+              .to have_requested(:post, 'hooks.slack.com/services/T00000000')
+              .with(body: /<!here>/)
+          end
+        end
       end
     end
   end

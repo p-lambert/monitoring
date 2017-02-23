@@ -14,7 +14,10 @@ module Monitoring
       end
 
       def text(result)
-        "#{emoji(result)} *[#{result.probe}]* #{result.message}"
+        msg = "#{emoji(result)} *[#{result.probe}]* #{result.message}"
+        msg += ' <!here>' if result.failure?
+
+        msg
       end
 
       def app_name
