@@ -121,6 +121,10 @@ following code to your `routes.rb` file:
 get 'monitoring', to: Monitoring::Route
 ```
 
+## TODOS
+
+- [ ] Improve concurrency model by using a Thread Pool
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/Vestorly/monitoring.
